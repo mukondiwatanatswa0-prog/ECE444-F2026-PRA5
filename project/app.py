@@ -104,6 +104,21 @@ def delete_entry(post_id):
         result = {'status': 0, 'message': repr(e)}
     return jsonify(result)
 
+def ensure_db():
+    with app.app_context():
+        db = get_db()
+
+        # Check whether the entries table exists
+        table = db.execute(
+            "SELECT name FROM sqlite_master "
+            "WHERE type='table' AND name='entries'"
+        ).fetchone()
+
+        if table is None:
+            init_db()
+            
+ensure_db()
+
 
 if __name__ == "__main__":
     app.run()
